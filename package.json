@@ -1,0 +1,19 @@
+{
+  "name": "bflights",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.22"
+  },
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "nodemon --inspect index.js"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
+}

@@ -9,5 +9,5 @@ const userController = require('../controllers/userController');
 router.post('/register', userController.handleRegister);
 router.post('/login', userController.handleLogin);
 router.get('/refresh', userController.refreshTokenAgain);
-router.get('/logout', userController.handleLogout);
+router.post('/logout', userController.handleLogout);
 module.exports = router;

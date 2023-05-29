@@ -13,9 +13,9 @@ let loginedUsers = [];
 
 const userController = {
   handleRegister: async (req, res) => {
-    const { email, phone, fullname, password } = req.body;
+    const { email, phone, fullname, password, role } = req.body;
     debug(req.body);
-    if (!email || !phone || !fullname || !password) {
+    if (!email || !phone || !fullname || !password || !role) {
       return res.status(500).json({ error: 'Missing required value' });
     }
 
@@ -67,7 +67,8 @@ const userController = {
       password: hashPassword,
       fullname,
       phone,
-      refreshToken
+      refreshToken,
+      role
     });
 
     debug(currentUser);
@@ -144,13 +145,13 @@ const userController = {
           loginedUsers = loginedUsers.filter((tkItem) => tkItem != token);
         }
         debug('after verify: ', loginedUsers);
-        return res.status(403).json({ error: err });
+        return res.status(500).json({ error: err });
       }
       let oldUser = await databaseUser.findOne({ email: payload.email });
       if (!oldUser) {
         return res.status(500).json({ error: 'Invalid account' });
       }
-      req.user = { email: oldUser.email };
+      req.user = { email: oldUser.email, role: oldUser.role };
       debug(loginedUsers);
       return next();
     });
@@ -185,6 +186,30 @@ const userController = {
         res.status(200).json({ accessToken: newAccessToken });
       }
     );
+  },
+  verifyAdminRole: async (req, res, next) => {
+    userController.verifyAccessToken(req, res, () => {
+      if (req.user.role === 'admin') {
+        return next();
+      }
+      return res.status(401).json('Forbiden');
+    });
+  },
+  verifySaleRole: async (req, res, next) => {
+    userController.verifyAccessToken(req, res, () => {
+      if (req.user.role === 'sale') {
+        return next();
+      }
+      return res.status(401).json('Forbiden');
+    });
+  },
+  verifyCustomerRole: async (req, res, next) => {
+    userController.verifyAccessToken(req, res, () => {
+      if (req.user.role === 'customer') {
+        return next();
+      }
+      return res.status(401).json('Forbiden');
+    });
   }
 };
 

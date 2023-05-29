@@ -1,8 +1,21 @@
 const router = require('express').Router();
 const { database } = require('../configs/mongodb');
-const { verifyAccessToken } = require('../controllers/userController');
+const {
+  verifyAccessToken,
+  verifyAdminRole,
+  verifySaleRole,
+  verifyCustomerRole
+} = require('../controllers/userController');
 
-router.get('/', verifyAccessToken, (req, res) => {
+router.get('/sale', verifySaleRole, (req, res) => {
+  res.status(200).json('sale success');
+});
+
+router.get('/customer', verifyCustomerRole, (req, res) => {
+  res.status(200).json('customer success');
+});
+
+router.get('/', verifyAdminRole, (req, res) => {
   // Replace the uri string with your MongoDB deployment's connection string.
   async function run() {
     try {

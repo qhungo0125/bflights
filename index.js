@@ -6,9 +6,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const route = require('./routes');
-const { run } = require('./config/mongodb.js');
+const { run } = require('./configs/mongodb.js');
 
-run().catch(console.dir);
+//connected to mongodb
+run();
 
 const app = express();
 const port = process.env.PORT;
@@ -16,6 +17,7 @@ const port = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 
+app.use('/auth', route.auth);
 app.use('/', route.user);
 
 // app.use("/auth", authen)

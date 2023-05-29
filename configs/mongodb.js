@@ -1,5 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
-
+const { createDebug } = require('../untils/DebugHelper');
+const debug = new createDebug('configs/mongodb');
 const uri = process.env.mongoUri;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -10,22 +11,20 @@ const client = new MongoClient(uri, {
   }
 });
 async function run() {
-  console.log('async function run()');
+  debug('async function run()');
   try {
+    debug('connect');
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db('admin').command({ ping: 1 });
-    console.log(
-      'Pinged your deployment. You successfully connected to MongoDB!'
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+  } catch (err) {
+    client.close();
+    return err;
   }
 }
 
+const database = client.db('BflightsDB');
+
 module.exports = {
   run,
-  client
+  database
 };

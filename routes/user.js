@@ -1,11 +1,11 @@
 const router = require('express').Router();
-const { client } = require('../config/mongodb');
+const { database } = require('../configs/mongodb');
+const { verifyAccessToken } = require('../controllers/userController');
 
-router.get('/', (req, res) => {
+router.get('/', verifyAccessToken, (req, res) => {
   // Replace the uri string with your MongoDB deployment's connection string.
   async function run() {
     try {
-      const database = client.db('BflightsDB');
       const movies = database.collection('collection1');
       const findResult = await movies.find({}).toArray();
       res.status(200).json(findResult);

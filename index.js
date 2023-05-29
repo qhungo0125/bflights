@@ -6,9 +6,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const route = require('./routes');
-const { run } = require('./config/mongodb.js');
+const { run } = require('./configs/mongodb.js');
 
-run().catch(console.dir);
+//connected to mongodb
+run();
 
 const app = express();
 const port = process.env.PORT;

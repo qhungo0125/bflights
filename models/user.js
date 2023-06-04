@@ -5,7 +5,7 @@ const User = function (user) {
   this.password = user.password;
   this.refreshToken = user.refreshToken;
   this.role = user.role;
-  // 3 roles: admin, sale, customer
+  // 2 roles: admin, customer
   return this;
 };
 module.exports = { User };

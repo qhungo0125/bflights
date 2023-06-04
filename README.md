@@ -3,6 +3,7 @@
 ### Description:
 
 - Web app use for booking plane ticket
+- 2 roles: admin(add fliights, aiports, term,...) and customer (buy ticket, view schedule,...)
 
 ### Authentication
 

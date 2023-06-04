@@ -1,13 +1,11 @@
 const { createDebug } = require('../untils/DebugHelper');
 const debug = new createDebug('/controllers/userController');
 const validator = require('validator');
-const { User, userMethod } = require('../models/user');
+const { userMethod } = require('../models/user');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
 
-const { database } = require('../configs/mongodb');
-const databaseUser = database.collection('users');
 const { gRefreshToken, gAccessToken } = require('../untils/Token');
 let loginedUsers = [];
 

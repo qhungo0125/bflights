@@ -1,8 +1,6 @@
 const { createDebug } = require('../untils/DebugHelper');
 const debug = new createDebug('/controllers/termsController');
-const { database } = require('../configs/mongodb');
-const databaseTerm = database.collection('terms');
-const { Term, termsMethod } = require('../models/term');
+const { termsMethod } = require('../models/terms');
 
 const termsController = {
   getTerms: async (req, res) => {
@@ -14,17 +12,6 @@ const termsController = {
     }
   },
   initTerms: async (req, res) => {
-    const terms = new Term({
-      quantityAirports: 10,
-      minTimeFlight: 0, // in minutes
-      maxTransitions: 10,
-      minPauseTime: 0,
-      maxPauseTime: 10, // in minutes
-      quantityClasses: 3
-    });
-
-    debug(terms);
-
     try {
       const resp = await termsMethod.getTermsArray();
       // debug(resp);
@@ -36,6 +23,17 @@ const termsController = {
     }
 
     debug('next');
+
+    const terms = {
+      quantityAirports: 10,
+      minTimeFlight: 0, // in minutes
+      maxTransitions: 10,
+      minPauseTime: 0,
+      maxPauseTime: 10, // in minutes
+      quantityClasses: 3
+    };
+
+    debug(terms);
 
     try {
       const resp = await termsMethod.insertTerms(terms);

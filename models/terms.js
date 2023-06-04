@@ -21,7 +21,8 @@ const termsMethod = {
     const resp = await databaseTerm.find({}).toArray();
     return resp;
   },
-  insertTerms: async (terms) => {
+  insertTerms: async (termsData) => {
+    const terms = new Term(termsData);
     const resp = await databaseTerm.insertOne(terms);
     return resp;
   },

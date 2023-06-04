@@ -1,11 +1,13 @@
+const { createDebug } = require('../untils/DebugHelper');
+const debug = new createDebug('/controllers/termsController');
 const { database } = require('../configs/mongodb');
 const databaseTerm = database.collection('terms');
-const { Term } = require('../models/term');
+const { Term, termsMethod } = require('../models/term');
 
 const termsController = {
   getTerms: async (req, res) => {
     try {
-      const resp = await databaseTerm.findOne({});
+      const resp = await termsMethod.getTerms();
       res.status(200).json(resp);
     } catch (err) {
       res.status(500).json(err);
@@ -24,7 +26,7 @@ const termsController = {
     debug(terms);
 
     try {
-      const resp = await databaseTerm.find({}).toArray();
+      const resp = await termsMethod.getTermsArray();
       // debug(resp);
       if (resp.length !== 0)
         return res.status(200).json('terms is initialized');
@@ -36,7 +38,7 @@ const termsController = {
     debug('next');
 
     try {
-      const resp = await databaseTerm.insertOne(terms);
+      const resp = await termsMethod.insertTerms(terms);
       return res.status(200).json(resp.acknowledged);
     } catch (error) {
       debug(error);
@@ -65,12 +67,7 @@ const termsController = {
 
     try {
       debug('update start');
-      const update = await databaseTerm.findOneAndUpdate(
-        {},
-        {
-          $set: { [name]: value }
-        }
-      );
+      const update = await termsMethod.updateTerm({ name, value });
       debug('update end ', update.value);
 
       if (!update.value) {

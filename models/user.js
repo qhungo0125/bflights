@@ -1,3 +1,8 @@
+const { database } = require('../configs/mongodb');
+const databaseUser = database.collection('users');
+const { createDebug } = require('../untils/DebugHelper');
+const debug = new createDebug('/models/user');
+
 const User = function (user) {
   this.email = user.email;
   this.phone = user.phone;
@@ -10,4 +15,32 @@ const User = function (user) {
   // 2 roles: admin, customer
   return this;
 };
-module.exports = { User };
+
+const userMethod = {
+  findUserByCondition: async (cond) => {
+    debug(cond);
+    const resp = await databaseUser.findOne({
+      [cond.name]: cond.value
+    });
+    debug(resp);
+    return resp;
+  },
+  addUser: async (user) => {
+    const currentUser = new User(user);
+    const resp = await databaseUser.insertOne(currentUser);
+    return resp;
+  },
+
+  updateUser: async (email, refreshToken) => {
+    const update = await databaseUser.findOneAndUpdate(
+      { email },
+      {
+        $set: { refreshToken }
+      }
+    );
+
+    return update;
+  }
+};
+
+module.exports = { User, userMethod };

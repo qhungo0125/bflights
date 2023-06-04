@@ -19,6 +19,7 @@ app.use(express.json());
 
 app.use('/auth', route.auth);
 app.use('/', route.user);
+app.use('/terms', route.term);
 
 // app.use("/auth", authen)
 

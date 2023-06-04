@@ -1,7 +1,7 @@
 const { createDebug } = require('../untils/DebugHelper');
 const debug = new createDebug('/controllers/userController');
 const validator = require('validator');
-const { User } = require('../models/user');
+const { User, userMethod } = require('../models/user');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
@@ -66,8 +66,9 @@ const userController = {
 
     try {
       debug('here');
-      const oldUser = await databaseUser.findOne({
-        email
+      const oldUser = await userMethod.findUserByCondition({
+        name: 'email',
+        value: email
       });
       // .toArray();
       debug(oldUser);
@@ -80,7 +81,8 @@ const userController = {
 
     const hashPassword = await bcrypt.hash(password, saltRounds);
     const refreshToken = gRefreshToken({ email });
-    const currentUser = new User({
+
+    const user = {
       email,
       password: hashPassword,
       fullname,
@@ -89,18 +91,16 @@ const userController = {
       role,
       identificationCode,
       status: 'valid'
-    });
-
-    debug(currentUser);
+    };
 
     try {
-      await databaseUser.insertOne(currentUser);
+      await userMethod.addUser(user);
     } catch (error) {
       debug(error);
       return res.status(500).json(error);
     }
 
-    const { _id, password: pw, ...data } = currentUser;
+    const { _id, password: pw, ...data } = user;
     return res.status(200).json(data);
   },
   handleLogin: async (req, res) => {
@@ -110,7 +110,10 @@ const userController = {
       return res.status(200).json({ error: 'Invalid data' });
     }
 
-    let oldUser = await databaseUser.findOne({ email });
+    let oldUser = await userMethod.findUserByCondition({
+      name: 'email',
+      value: email
+    });
     if (!oldUser) {
       return res.status(500).json({ error: 'Invalid account' });
     }
@@ -124,12 +127,7 @@ const userController = {
 
     try {
       debug('update start');
-      const update = await databaseUser.findOneAndUpdate(
-        { email: oldUser.email },
-        {
-          $set: { refreshToken }
-        }
-      );
+      const update = await userMethod.updateUser(oldUser.email, refreshToken);
       debug('update end ', update.value);
 
       if (!update.value) {
@@ -167,7 +165,12 @@ const userController = {
         debug('after verify: ', loginedUsers);
         return res.status(500).json({ error: err });
       }
-      let oldUser = await databaseUser.findOne({ email: payload.email });
+
+      let oldUser = await userMethod.findUserByCondition({
+        name: 'email',
+        value: payload.email
+      });
+
       if (!oldUser) {
         return res.status(500).json({ error: 'Invalid account' });
       }
@@ -190,9 +193,12 @@ const userController = {
         if (err) {
           return res.status(403).json({ error: err });
         }
-        let oldUser = await databaseUser.findOne({
-          refreshToken: refreshtoken
+
+        let oldUser = await userMethod.findUserByCondition({
+          name: 'refreshtoken',
+          value: refreshtoken
         });
+
         if (!oldUser) {
           return res.status(500).json({ error: 'Invalid account' });
         }

@@ -13,9 +13,17 @@ let loginedUsers = [];
 
 const userController = {
   handleRegister: async (req, res) => {
-    const { email, phone, fullname, password, role } = req.body;
+    const { email, phone, fullname, password, role, identificationCode } =
+      req.body;
     debug(req.body);
-    if (!email || !phone || !fullname || !password || !role) {
+    if (
+      !email ||
+      !phone ||
+      !fullname ||
+      !password ||
+      !role ||
+      !identificationCode
+    ) {
       return res.status(500).json({ error: 'Missing required value' });
     }
 
@@ -29,17 +37,27 @@ const userController = {
       return res.status(500).json({ error: 'Invalid mobile phone' });
     }
 
-    const regexValidateFullName = /^[a-zA-Z ]+$/;
-    debug(regexValidateFullName.test(fullname));
-    if (!regexValidateFullName.test(fullname)) {
-      return res.status(500).json({ error: 'Invalid full name' });
-    }
+    // const regexValidateFullName = /^[a-zA-Z ]+$/;
+    // debug(regexValidateFullName.test(fullname));
+    // if (!regexValidateFullName.test(fullname)) {
+    //   return res.status(500).json({ error: 'Invalid full name' });
+    // }
 
     debug(password.length);
     if (password.length < 8) {
       return res
         .status(500)
         .json({ error: 'Password must be at least 8 characters' });
+    }
+
+    if (identificationCode.length != 12) {
+      return res
+        .status(500)
+        .json({ error: 'Identification Code must be 12 characters' });
+    }
+
+    if (role != 'admin' && role != 'customer') {
+      return res.status(500).json({ error: 'Invalid role' });
     }
 
     // save info to database
@@ -68,7 +86,9 @@ const userController = {
       fullname,
       phone,
       refreshToken,
-      role
+      role,
+      identificationCode,
+      status: 'valid'
     });
 
     debug(currentUser);

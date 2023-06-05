@@ -1,6 +1,6 @@
 {
   "engines": {
-    "node": ">=14.20.1"
+    "node": "18.15.0"
   },
   "name": "bflights",
   "version": "1.0.0",

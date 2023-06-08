@@ -75,27 +75,6 @@ class FlightModel extends BaseModel {
         const flights = await this.getFlights()
         return flights
     }
-
-    // just draft
-    async getByFromAirport(airportId) {
-        const querry = await this.collection.find({
-            fromAirport: airportId
-        }).toArray()
-        const res = querry.map(item => new Flight(...item))
-        return res
-    }
-    async getByToAirport(airportId) {
-        const querry = await this.collection.find({
-            toAirport: airportId
-        }).toArray()
-        const res = querry.map(item => new Flight(...item))
-        return res
-    }
-    async getByDateTime(dateTime) {
-        const querry = await this.collection.find({
-            dateTime: {}
-        }).toArray()
-    }
     async getSearchResult(fromAirport, toAirport, dateTime) {
         let criteriaObj = {
             fromAirport,

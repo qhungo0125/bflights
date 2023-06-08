@@ -7,6 +7,7 @@ dotenv.config();
 
 const route = require('./routes');
 const { run } = require('./configs/mongodb.js');
+const router = require('./routes/flight');
 
 //connected to mongodb
 run();
@@ -20,6 +21,8 @@ app.use(express.json());
 app.use('/auth', route.auth);
 app.use('/', route.user);
 app.use('/terms', route.terms);
+app.use('/airport', route.airport)
+app.use('/flight', route.flight)
 
 // app.use("/auth", authen)
 

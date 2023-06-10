@@ -16,7 +16,7 @@ router.get('/customer', verifyCustomerRole, (req, res) => {
   res.status(200).json('customer success');
 });
 
-router.get('/test', async (req, res) => {
+router.get('/test', verifyAccessToken, async (req, res) => {
   try {
     // await ticketClassMethod.init();
     const resp = await ticketClassMethod.getAll();

@@ -6,11 +6,11 @@ const { ticketClassMethod } = require("./ticketClass");
 
 const tbName = 'flight';
 class Flight {
-    constructor(_id, dateTime, flightTime, fromAirport, toAirport) {
+    constructor(_id, dateTime, flightDuration, fromAirport, toAirport) {
         try {
             this._id = _id ? new ObjectId(_id) : _id
             this.dateTime = new Date(dateTime)
-            this.flightTime = flightTime
+            this.flightDuration = flightDuration
             this.fromAirport = new ObjectId(fromAirport)
             this.toAirport = new ObjectId(toAirport)
         } catch (error) {

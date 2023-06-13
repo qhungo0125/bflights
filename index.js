@@ -25,6 +25,8 @@ app.use('/airport', route.airport)
 app.use('/flight', route.flight)
 app.use('/flightStatistic', route.flightStatistic)
 app.use('/ticket', route.ticket)
+app.use('/transition-airport', route.transitionAirport)
+
 
 
 // app.use("/auth", authen)

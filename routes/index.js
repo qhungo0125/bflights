@@ -3,10 +3,14 @@ const auth = require('./auth');
 const terms = require('./terms');
 const airport = require('./airport')
 const flight = require('./flight')
+const flightStatistic = require('./flightStatistic')
+const ticket = require('./ticket')
 module.exports = {
   user,
   auth,
   terms,
   airport,
-  flight
+  flight,
+  flightStatistic,
+  ticket
 };

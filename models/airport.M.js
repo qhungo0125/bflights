@@ -4,8 +4,13 @@ const BaseModel = require("./BaseModel");
 
 const tbName = 'airport';
 class Airport {
-    constructor(name) {
-        this.name = name
+    constructor(_id, name) {
+        try {
+            this._id = _id ? new ObjectId(_id) : _id
+            this.name = name
+        } catch (error) {
+            throw new Error("Invalid Id")
+        }
     }
 }
 
@@ -21,8 +26,9 @@ class AirportModel extends BaseModel {
         return querry
     }
     async addNew(airport) {
+        const { _id, ...airportInfo } = airport
         const res = await this.collection.insertOne({
-            ...airport,
+            ...airportInfo,
             status: true
         })
         return res
@@ -43,13 +49,17 @@ class AirportModel extends BaseModel {
         )
         return res
     }
-    async updateById(id, field, value) {
-        const res = await this.collection.updateOne(
+    async updateById(airportObj) {
+        const { _id, ...airportInfo } = airportObj
+        const res = await this.collection.findOneAndUpdate(
             {
-                _id: new ObjectId(id),
+                _id: new ObjectId(_id),
                 status: true
             },
-            { $set: { [field]: value } }
+            {
+                $set: airportInfo
+            },
+            { returnDocument: "after" }
         )
         return res
     }

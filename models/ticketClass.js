@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const { database } = require('../configs/mongodb');
 const databaseTC = database.collection('ticketclass');
 const { createDebug } = require('../untils/DebugHelper');
@@ -12,6 +13,10 @@ const ticketClassMethod = {
   getAll: async () => {
     const resp = await databaseTC.find({}).toArray();
     return resp;
+  },
+  getById: async (id) => {
+    const ticketClass = await databaseTC.findOne({_id: new ObjectId(id)})
+    return ticketClass
   },
 
   init: async () => {

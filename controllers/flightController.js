@@ -1,9 +1,7 @@
 
 const { ObjectId } = require('mongodb')
 const { Flight, flightModel } = require('../models/flight.M')
-const { ticketClassMethod } = require('../models/ticketClass')
 const airportController = require('./airportController')
-const { flightStatisticModel } = require('../models/flightStatistic.M')
 
 class flightController {
     checkExistedId = async (id) => {
@@ -20,7 +18,7 @@ class flightController {
     checkValidFlightObj = async (flight) => {
         // Check missing attributes
         if (!flight.dateTime ||
-            !flight.flightTime ||
+            !flight.flightDuration ||
             !flight.fromAirport ||
             !flight.toAirport) {
             throw new Error('Missing required value')
@@ -43,11 +41,11 @@ class flightController {
     post = async (req, res) => {
         try {
             const {
-                dateTime, flightTime, fromAirport, toAirport,
+                dateTime, flightDuration, fromAirport, toAirport,
             } = req.body
             // Check valid flight obj
             const newFlightObj = new Flight(
-                null, dateTime, flightTime,
+                null, dateTime, flightDuration,
                 fromAirport, toAirport)
             await this.checkValidFlightObj(newFlightObj)
 
@@ -100,9 +98,9 @@ class flightController {
         try {
             const { flightId } = req.params
             const {
-                dateTime, flightTime, fromAirport, toAirport
+                dateTime, flightDuration, fromAirport, toAirport
             } = req.body
-            const flightObj = new Flight(flightId, dateTime, flightTime, fromAirport, toAirport)
+            const flightObj = new Flight(flightId, dateTime, flightDuration, fromAirport, toAirport)
             await this.checkValidFlightObj(flightObj)
             const result = await flightModel.updateById(flightObj)
             res.status(200).json(result.value)

@@ -5,6 +5,7 @@ const airport = require('./airport')
 const flight = require('./flight')
 const flightStatistic = require('./flightStatistic')
 const ticket = require('./ticket')
+const transitionAirport = require('./transitionAirport')
 module.exports = {
   user,
   auth,
@@ -12,5 +13,6 @@ module.exports = {
   airport,
   flight,
   flightStatistic,
-  ticket
+  ticket,
+  transitionAirport
 };

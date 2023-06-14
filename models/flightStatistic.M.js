@@ -3,13 +3,14 @@ const BaseModel = require("./BaseModel");
 
 const tbName = 'flightStatistic';
 class FlightStatistic {
-    constructor(_id, flightId, classOfTicket, numberOfSeat, numberOfEmptySeat) {
+    constructor(_id, flightId, classOfTicket, numberOfSeat, numberOfEmptySeat, price) {
         try {
             this._id = _id ? new ObjectId(_id) : _id
             this.flightId = flightId ? new ObjectId(flightId) : flightId
             this.classOfTicket = new ObjectId(classOfTicket)
             this.numberOfSeat = numberOfSeat
             this.numberOfEmptySeat = numberOfEmptySeat
+            this.price = price
         } catch (error) {
             throw new Error("Invalid Id")
         }
@@ -100,14 +101,14 @@ class FlightStatisticModel extends BaseModel {
         return res
     }
     async updateByFlightAndTicketClass(flightStatisticObj) {
-        const { flightId, classOfTicket, numberOfSeat, numberOfEmptySeat } = flightStatisticObj
+        const { _id, flightId, classOfTicket, ...flightStatisticInfo } = flightStatisticObj
         const res = await this.collection.findOneAndUpdate(
             {
                 flightId: flightId,
                 classOfTicket: classOfTicket,
                 $expr: {
                     $gte: [
-                        numberOfSeat,
+                        flightStatisticInfo.numberOfSeat,
                         {
                             $subtract: ["$numberOfSeat", "$numberOfEmptySeat"]
                         }
@@ -117,13 +118,12 @@ class FlightStatisticModel extends BaseModel {
             [
                 {
                     $set: {
-                        numberOfSeat: numberOfSeat,
+                        ...flightStatisticInfo,
                         numberOfEmptySeat: {
                             $subtract: [
-                                numberOfSeat,
+                                flightStatisticInfo.numberOfSeat,
                                 { $subtract: ["$numberOfSeat", "$numberOfEmptySeat"] }
                             ]
-
                         }
                     }
                 }

@@ -29,7 +29,7 @@ class FlightModel extends BaseModel {
         })
         await Promise.all(
             (await ticketClassMethod.getAll()).map(async (ticketClass) => {
-                const flightStatistic = new FlightStatistic(null, res.insertedId, ticketClass._id, 0, 0)
+                const flightStatistic = new FlightStatistic(null, res.insertedId, ticketClass._id, 0, 0, null)
                 const { _id, ...flightObj } = flightStatistic
                 await flightStatisticModel.add(flightObj)
             })

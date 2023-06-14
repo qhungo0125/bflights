@@ -16,12 +16,13 @@ class FlightStatisticController {
     }
     checkValidFlightStatisticObj = async (flightStatisticObj) => {
         // Check missing attributes
-        const { flightId, classOfTicket, numberOfSeat } = flightStatisticObj
+        const { flightId, classOfTicket, numberOfSeat, price } = flightStatisticObj
         if (
             !flightId ||
             !classOfTicket ||
             !classOfTicket ||
-            !numberOfSeat) {
+            !numberOfSeat ||
+            !price) {
             throw new Error('Missing required value')
         }
         // if have _id, check
@@ -40,24 +41,21 @@ class FlightStatisticController {
     put = async (req, res) => {
         try {
             const { flightId, classOfTicket } = req.params
-            const { numberOfSeat } = req.body
+            const { numberOfSeat, price } = req.body
             const flightStatisticObj = new FlightStatistic(
-                null, flightId, classOfTicket, numberOfSeat, null
+                null, flightId, classOfTicket, numberOfSeat, null, price
             )
             await this.checkValidFlightStatisticObj(flightStatisticObj)
-
-            // numberOfSeat must be >= booked Seat
-
-
             const result = await flightStatisticModel.updateByFlightAndTicketClass(
                 flightStatisticObj
             )
 
-            if(!result.value){
+            if (!result.value) {
                 throw new Error("Error updating flight statistic")
             }
             res.status(200).json(result.value)
         } catch (error) {
+            console.log(error)
             res.status(500).json({ error: error.message })
         }
     }

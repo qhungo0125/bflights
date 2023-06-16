@@ -37,43 +37,6 @@ class FlightModel extends BaseModel {
         )
         return res;
     }
-    async getFlights(criteria) {
-        const pipelines = [
-            {
-                $lookup: {
-                    from: "flightStatistic",
-                    let: { "id": "$_id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $eq: ["$flightId", "$$id"]
-                                }
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from: "ticketclass",
-                                localField: "classOfTicket",
-                                foreignField: "_id",
-                                as: "classOfTicket"
-                            }
-                        },
-                        {
-                            $addFields: {
-                                "classOfTicket": { "$arrayElemAt": ["$classOfTicket", 0] }
-                            }
-                        }
-                    ],
-                    as: "flightStatistics"
-                }
-            }
-        ]
-        if (criteria)
-            pipelines.push(criteria)
-        const flights = await this.collection.aggregate(pipelines).toArray()
-        return flights
-    }
     async all() {
         // const flights = await this.getFlights()
         const flights = await this.collection.find(
@@ -139,6 +102,18 @@ class FlightModel extends BaseModel {
                 }
             }
         )
+        return res
+    }
+    async getByYear(year) {
+        const fromDate = new Date(year, 0, 1)
+        const toDate = new Date(year + 1, 0, 1)
+        const filter = {
+            dateTime: {
+                $gte: fromDate,
+                $lt: toDate
+            }
+        }
+        const res = await this.collection.find(filter).toArray()
         return res
     }
 }

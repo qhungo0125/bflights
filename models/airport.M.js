@@ -16,7 +16,13 @@ class Airport {
 class AirportModel extends BaseModel {
     constructor() {
         super(tbName)
-        this.collection.createIndex({ name: 1 }, { unique: true })
+        this.collection.createIndex(
+            { name: 1 },
+            {
+                unique: true,
+                partialFilterExpression: { status: true }
+            }
+        )
     }
     async getAll() {
         const querry = await this.collection

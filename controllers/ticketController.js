@@ -2,18 +2,23 @@ const { flightStatisticModel } = require("../models/flightStatistic.M");
 const { Ticket, TicketModel } = require("../models/ticket.M");
 const { userMethod } = require("../models/user");
 const flightController = require("./flightController");
+const flightStatisticController = require("./flightStatisticController");
 const ticketClassController = require("./ticketClassController")
 const ticketController = {
+    checkValidTicket: async (ticketObj) => {
+        const { flightId, classOfTicket } = ticketObj
+        if (!flightId ||
+            !classOfTicket)
+            throw new Error("Missing required infomation")
+
+        if (await
+            flightStatisticController.checkExistedByFlightAndTicketClass(flightId, classOfTicket)) {
+            throw new Error("Flight Statistic is not existed")
+        }
+    },
     post: async (req, res) => {
         try {
             const { flightId, classOfTicket } = req.body
-            if (!flightId ||
-                !classOfTicket)
-                throw new Error("Missing required infomation")
-            if (!await flightController.checkExistedId(flightId))
-                throw new Error("Flight's id is invalid")
-            if (!await ticketClassController.checkExistedId(classOfTicket))
-                throw new Error("Class of Ticket is invalid")
 
             const user = await userMethod.findUserByCondition(
                 {
@@ -21,11 +26,13 @@ const ticketController = {
                     value: req.user.email
                 }
             )
+            const newTicket = new Ticket(flightId, classOfTicket, user._id)
+
             const decreaseEmptySeatResult =
                 await flightStatisticModel.decreaseEmptySeat(flightId, classOfTicket)
-            if (decreaseEmptySeatResult.modifiedCount === 0)
+            if (decreaseEmptySeatResult.modifiedCount === 0) {
                 throw new Error("No empty seat allow")
-            const newTicket = new Ticket(flightId, classOfTicket, user._id)
+            }
             const result = await TicketModel.add(newTicket)
             res.status(200).json(await TicketModel.getById(result.insertedId))
         } catch (error) {

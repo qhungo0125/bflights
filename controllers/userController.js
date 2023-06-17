@@ -237,6 +237,26 @@ const userController = {
       }
       return res.status(401).json('Forbiden');
     });
+  },
+  getUserData: async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(500).json({ error: 'Missing required value' });
+    }
+    try {
+      debug('here');
+      const user = await userMethod.findUserByCondition({
+        name: 'email',
+        value: email
+      });
+      // .toArray();
+      debug(user);
+      if (user) {
+        return res.status(200).json({ data: user });
+      }
+    } catch (error) {
+      return res.status(500).json({ error });
+    }
   }
 };
 

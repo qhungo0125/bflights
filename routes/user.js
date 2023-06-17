@@ -4,9 +4,12 @@ const {
   verifyAccessToken,
   verifyAdminRole,
   verifySaleRole,
-  verifyCustomerRole
+  verifyCustomerRole,
+  getUserData
 } = require('../controllers/userController');
 const { ticketClassMethod } = require('../models/ticketClass');
+
+router.get('/userinfo', verifyAccessToken, getUserData);
 
 router.get('/sale', verifySaleRole, (req, res) => {
   res.status(200).json('sale success');

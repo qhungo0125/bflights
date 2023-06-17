@@ -1,5 +1,5 @@
 const { createDebug } = require('../untils/DebugHelper');
-const debug = new createDebug('/controllers/userController');
+const debug = new createDebug('/controller/userController');
 const validator = require('validator');
 const { userMethod } = require('../models/user');
 const bcrypt = require('bcrypt');
@@ -24,23 +24,19 @@ const userController = {
       return res.status(500).json({ error: 'Missing required value' });
     }
 
-    // debug('validated email');
     if (!validator.isEmail(email)) {
       return res.status(500).json({ error: 'Invalid email' });
     }
 
-    // debug('validated mobile phone');
     if (!validator.isMobilePhone(phone)) {
       return res.status(500).json({ error: 'Invalid mobile phone' });
     }
 
     // const regexValidateFullName = /^[a-zA-Z ]+$/;
-    // debug(regexValidateFullName.test(fullname));
     // if (!regexValidateFullName.test(fullname)) {
     //   return res.status(500).json({ error: 'Invalid full name' });
     // }
 
-    // debug(password.length);
     if (password.length < 8) {
       return res
         .status(500)
@@ -62,13 +58,11 @@ const userController = {
     // find user in db
 
     try {
-      // debug('here');
       const oldUser = await userMethod.findUserByCondition({
         name: 'email',
         value: email
       });
       // .toArray();
-      // debug(oldUser);
       if (oldUser) {
         return res.status(500).json({ error: 'Existed user' });
       }
@@ -93,7 +87,6 @@ const userController = {
     try {
       await userMethod.addUser(user);
     } catch (error) {
-      // debug(error);
       return res.status(500).json(error);
     }
 
@@ -102,7 +95,6 @@ const userController = {
   },
   handleLogin: async (req, res) => {
     const { email, password } = req.body;
-    // debug(req.body);
     if (!email || !password) {
       return res.status(200).json({ error: 'Invalid data' });
     }
@@ -123,9 +115,7 @@ const userController = {
     const refreshToken = gRefreshToken(oldUser);
 
     try {
-      debug('update start');
       const update = await userMethod.updateUser(oldUser.email, refreshToken);
-      debug('update end ', update.value);
 
       if (!update.value) {
         return res.status(500).json({ error: 'Fail to update user data' });
@@ -134,35 +124,29 @@ const userController = {
       const { _id, password: pw, ...data } = oldUser;
       data.accessToken = gAccessToken(data);
       loginedUsers.push(data.accessToken);
-      debug('pre: ', loginedUsers);
       return res.status(200).json(data);
     } catch (err) {
       return res.status(500).json(err);
     }
   },
   handleLogout: async (req, res) => {
-    debug('pre logout: ', loginedUsers);
     if (!req.headers.token) {
       return res.status(500).json({ error: 'Invalid accessToken' });
     }
     loginedUsers = loginedUsers.filter((tkItem) => tkItem != req.headers.token);
-    debug('after logout: ', loginedUsers);
     return res.status(200).json({});
   },
   verifyAccessToken: async (req, res, next) => {
     const { token } = req.headers;
-    debug(token);
     if (!token) {
       return res.status(403).json({ error: 'Not allowed' });
     }
 
     jwt.verify(token, process.env.jwtAccessToken, async (err, payload) => {
       if (err) {
-        debug('pre verify: ', loginedUsers);
         if (loginedUsers.includes(token)) {
           loginedUsers = loginedUsers.filter((tkItem) => tkItem != token);
         }
-        debug('after verify: ', loginedUsers);
         return res.status(403).json({ error: err });
       }
 
@@ -175,13 +159,11 @@ const userController = {
         return res.status(500).json({ error: 'Invalid account' });
       }
       req.user = { email: oldUser.email, role: oldUser.role };
-      debug(loginedUsers);
       return next();
     });
   },
   refreshTokenAgain: async (req, res) => {
     const { refreshtoken, token } = req.headers;
-    debug(refreshtoken);
     if (!refreshtoken || !token) {
       return res.status(403).json({ error: 'Not allowed' });
     }
@@ -194,14 +176,14 @@ const userController = {
           return res.status(403).json({ error: err });
         }
 
-        debug('refreshtoken find', refreshtoken);
+        debug(refreshtoken);
 
         let oldUser = await userMethod.findUserByCondition({
-          name: 'refreshtoken',
+          name: 'refreshToken',
           value: refreshtoken
         });
 
-        debug('olduser', oldUser);
+        debug('old user ', oldUser);
 
         if (!oldUser) {
           return res.status(500).json({ error: 'Invalid account' });

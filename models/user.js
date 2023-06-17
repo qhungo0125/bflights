@@ -18,11 +18,9 @@ const User = function (user) {
 
 const userMethod = {
   findUserByCondition: async (cond) => {
-    debug(cond);
     const resp = await databaseUser.findOne({
       [cond.name]: cond.value
     });
-    debug(resp);
     return resp;
   },
   addUser: async (user) => {

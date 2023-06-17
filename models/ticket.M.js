@@ -4,9 +4,14 @@ const BaseModel = require("./BaseModel");
 const tbName = 'ticket';
 class Ticket {
     constructor(flightId, classOfTicket, userId) {
-        this.flight = new ObjectId(flightId)
-        this.classOfTicket = new ObjectId(classOfTicket)
-        this.user = new ObjectId(userId)
+        try {
+            this.flight = new ObjectId(flightId)
+            this.classOfTicket = new ObjectId(classOfTicket)
+            this.user = new ObjectId(userId)
+
+        } catch (error) {
+            throw new Error("Invalid Id")
+        }
     }
 }
 class TicketModel extends BaseModel {

@@ -132,6 +132,13 @@ class FlightStatisticModel extends BaseModel {
         )
         return res
     }
+    async getByFlightAndTicketClass(flightId, classOfTicket){
+        const res = await this.collection.findOne({
+            flightId : flightId,
+            classOfTicket: classOfTicket
+        })
+        return res
+    }
 }
 module.exports = {
     FlightStatistic,

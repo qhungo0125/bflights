@@ -3,6 +3,19 @@ const flightController = require("./flightController")
 const ticketClassController = require("./ticketClassController")
 
 class FlightStatisticController {
+    checkExistedByFlightAndTicketClass = async (flightId, classOfTicket) => {
+        try {
+            const flightStatistic = await
+                flightStatisticModel.getByFlightAndTicketClass(flightId, classOfTicket)
+            if(flightStatistic){
+                return true
+            } else {
+                return false
+            }
+        } catch (error) {
+            return false
+        }
+    }
     checkExistedId = async (id) => {
         try {
             const res = await flightStatisticModel.getById(id)

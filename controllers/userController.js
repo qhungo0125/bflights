@@ -195,6 +195,8 @@ const userController = {
           return res.status(403).json({ error: err });
         }
 
+        debug('refreshtoken find', refreshtoken);
+
         let oldUser = await userMethod.findUserByCondition({
           name: 'refreshtoken',
           value: refreshtoken

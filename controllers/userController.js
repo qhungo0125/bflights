@@ -13,7 +13,6 @@ const userController = {
   handleRegister: async (req, res) => {
     const { email, phone, fullname, password, role, identificationCode } =
       req.body;
-    debug(req.body);
     if (
       !email ||
       !phone ||
@@ -25,12 +24,12 @@ const userController = {
       return res.status(500).json({ error: 'Missing required value' });
     }
 
-    debug('validated email');
+    // debug('validated email');
     if (!validator.isEmail(email)) {
       return res.status(500).json({ error: 'Invalid email' });
     }
 
-    debug('validated mobile phone');
+    // debug('validated mobile phone');
     if (!validator.isMobilePhone(phone)) {
       return res.status(500).json({ error: 'Invalid mobile phone' });
     }
@@ -41,7 +40,7 @@ const userController = {
     //   return res.status(500).json({ error: 'Invalid full name' });
     // }
 
-    debug(password.length);
+    // debug(password.length);
     if (password.length < 8) {
       return res
         .status(500)
@@ -63,13 +62,13 @@ const userController = {
     // find user in db
 
     try {
-      debug('here');
+      // debug('here');
       const oldUser = await userMethod.findUserByCondition({
         name: 'email',
         value: email
       });
       // .toArray();
-      debug(oldUser);
+      // debug(oldUser);
       if (oldUser) {
         return res.status(500).json({ error: 'Existed user' });
       }
@@ -94,7 +93,7 @@ const userController = {
     try {
       await userMethod.addUser(user);
     } catch (error) {
-      debug(error);
+      // debug(error);
       return res.status(500).json(error);
     }
 
@@ -103,7 +102,7 @@ const userController = {
   },
   handleLogin: async (req, res) => {
     const { email, password } = req.body;
-    debug(req.body);
+    // debug(req.body);
     if (!email || !password) {
       return res.status(200).json({ error: 'Invalid data' });
     }
@@ -248,13 +247,11 @@ const userController = {
       return res.status(500).json({ error: 'Missing required value' });
     }
     try {
-      debug('here');
       const user = await userMethod.findUserByCondition({
         name: 'email',
         value: email
       });
       // .toArray();
-      debug(user);
       if (user) {
         return res.status(200).json({ data: user });
       }

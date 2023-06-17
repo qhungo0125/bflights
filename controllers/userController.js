@@ -143,6 +143,9 @@ const userController = {
   },
   handleLogout: async (req, res) => {
     debug('pre logout: ', loginedUsers);
+    if (!req.headers.token) {
+      return res.status(500).json({ error: 'Invalid accessToken' });
+    }
     loginedUsers = loginedUsers.filter((tkItem) => tkItem != req.headers.token);
     debug('after logout: ', loginedUsers);
     return res.status(200).json({});
@@ -161,7 +164,7 @@ const userController = {
           loginedUsers = loginedUsers.filter((tkItem) => tkItem != token);
         }
         debug('after verify: ', loginedUsers);
-        return res.status(500).json({ error: err });
+        return res.status(403).json({ error: err });
       }
 
       let oldUser = await userMethod.findUserByCondition({

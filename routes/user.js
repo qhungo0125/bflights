@@ -9,7 +9,7 @@ const {
 } = require('../controllers/userController');
 const { ticketClassMethod } = require('../models/ticketClass');
 
-router.get('/userinfo', verifyAccessToken, getUserData);
+router.post('/userinfo', verifyAccessToken, getUserData);
 
 router.get('/sale', verifySaleRole, (req, res) => {
   res.status(200).json('sale success');

@@ -202,6 +202,8 @@ const userController = {
           value: refreshtoken
         });
 
+        debug('olduser', oldUser);
+
         if (!oldUser) {
           return res.status(500).json({ error: 'Invalid account' });
         }

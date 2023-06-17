@@ -1,15 +1,14 @@
+const { ObjectId } = require('mongodb')
+const BaseModel = require('./BaseModel')
 
-const { ObjectId } = require("mongodb");
-const BaseModel = require("./BaseModel");
-
-const tbName = 'airport';
+const tbName = 'airport'
 class Airport {
     constructor(_id, name) {
         try {
             this._id = _id ? new ObjectId(_id) : _id
             this.name = name
         } catch (error) {
-            throw new Error("Invalid Id")
+            throw new Error('Invalid Id')
         }
     }
 }
@@ -20,9 +19,11 @@ class AirportModel extends BaseModel {
         this.collection.createIndex({ name: 1 }, { unique: true })
     }
     async getAll() {
-        const querry = await this.collection.find({
-            status: true
-        }).toArray()
+        const querry = await this.collection
+            .find({
+                status: true
+            })
+            .toArray()
         return querry
     }
     async addNew(airport) {
@@ -41,12 +42,10 @@ class AirportModel extends BaseModel {
         return res
     }
     async getByName(name) {
-        const res = await this.collection.findOne(
-            {
-                name: name,
-                status: true
-            }
-        )
+        const res = await this.collection.findOne({
+            name: name,
+            status: true
+        })
         return res
     }
     async updateById(airportObj) {
@@ -59,16 +58,16 @@ class AirportModel extends BaseModel {
             {
                 $set: airportInfo
             },
-            { returnDocument: "after" }
+            { returnDocument: 'after' }
         )
         return res
     }
     async deleteById(id) {
         const res = await this.collection.updateOne(
             { _id: new ObjectId(id) },
-            { $set: { value: false } }
+            { $set: { status: false } }
         )
         return res
     }
 }
-module.exports = { Airport, airportModel: new AirportModel };
+module.exports = { Airport, airportModel: new AirportModel() }

@@ -54,14 +54,18 @@ class FlightModel extends BaseModel {
         // else
         //     return null
         const flight = await this.collection.findOne({
-            _id: new ObjectId(id)
+            _id: new ObjectId(id),
+            status: true
         })
         return flight
     }
     async updateById(flightObj) {
         const { _id, ...flightInfo } = flightObj
         const res = await this.collection.findOneAndUpdate(
-            { _id: new ObjectId(_id) },
+            {
+                _id: new ObjectId(_id),
+                status: true
+            },
             {
                 $set: flightObj
             },
@@ -73,7 +77,7 @@ class FlightModel extends BaseModel {
         let criteriaObj = {
             fromAirport,
             toAirport,
-            dateTime
+            dateTime,
         }
         criteriaObj = Object.fromEntries(
             Object.entries(criteriaObj).filter(([key, value]) => value !== undefined)
@@ -108,6 +112,7 @@ class FlightModel extends BaseModel {
         const fromDate = new Date(year, 0, 1)
         const toDate = new Date(year + 1, 0, 1)
         const filter = {
+            status: true,
             dateTime: {
                 $gte: fromDate,
                 $lt: toDate

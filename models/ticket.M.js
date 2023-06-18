@@ -3,12 +3,12 @@ const BaseModel = require("./BaseModel");
 
 const tbName = 'ticket';
 class Ticket {
-    constructor(flightId, classOfTicket, userId) {
+    constructor(_id, flightId, classOfTicket, userId) {
         try {
+            this._id = _id ? new ObjectId(_id) : _id
             this.flightId = new ObjectId(flightId)
             this.classOfTicket = new ObjectId(classOfTicket)
             this.userId = new ObjectId(userId)
-
         } catch (error) {
             throw new Error("Invalid Id")
         }
@@ -19,11 +19,20 @@ class TicketModel extends BaseModel {
         super(tbName)
     }
     async add(ticket) {
-        const result = await this.collection.insertOne(ticket)
+        const { _id, ...ticketInfo } = ticket
+        const result = await this.collection.insertOne({
+            ...ticketInfo,
+            status: true
+        })
         return result
     }
     async getFullTicketInfo(additionalPipeline) {
         const pipeline = [
+            {
+                $match: {
+                    status: true
+                }
+            },
             {
                 $lookup: {
                     from: "flightStatistic",
@@ -87,6 +96,20 @@ class TicketModel extends BaseModel {
         } else {
             return null
         }
+    }
+    async deleteById(id) {
+        const res = await this.collection.updateOne(
+            {
+                _id: new ObjectId(id),
+                status: true
+            },
+            {
+                $set: {
+                    status: false
+                }
+            }
+        )
+        return res
     }
 }
 module.exports = {

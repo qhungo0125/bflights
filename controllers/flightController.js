@@ -33,6 +33,10 @@ class flightController {
             throw new Error("Invalid date-time")
         }
 
+        if (flight.dateTime < new Date()) {
+            throw new Error("Flight datetime can not be in the past")
+        }
+
         if (!Number.isInteger(flight.flightDuration)) {
             throw new Error("Flight Duration must be an interger")
         }

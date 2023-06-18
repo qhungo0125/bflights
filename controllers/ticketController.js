@@ -4,19 +4,19 @@ const { userMethod } = require("../models/user");
 const flightController = require("./flightController");
 const flightStatisticController = require("./flightStatisticController");
 const ticketClassController = require("./ticketClassController")
-const ticketController = {
-    checkValidTicket: async (ticketObj) => {
+class TicketController {
+    checkValidTicket = async (ticketObj) => {
         const { flightId, classOfTicket } = ticketObj
         if (!flightId ||
             !classOfTicket)
             throw new Error("Missing required infomation")
 
-        if (await
+        if (!await
             flightStatisticController.checkExistedByFlightAndTicketClass(flightId, classOfTicket)) {
             throw new Error("Flight Statistic is not existed")
         }
-    },
-    post: async (req, res) => {
+    }
+    post = async (req, res) => {
         try {
             const { flightId, classOfTicket } = req.body
 
@@ -27,6 +27,7 @@ const ticketController = {
                 }
             )
             const newTicket = new Ticket(flightId, classOfTicket, user._id)
+            await this.checkValidTicket(newTicket)
 
             const decreaseEmptySeatResult =
                 await flightStatisticModel.decreaseEmptySeat(flightId, classOfTicket)
@@ -38,8 +39,8 @@ const ticketController = {
         } catch (error) {
             res.status(500).json({ error: error.message })
         }
-    },
-    get: async (req, res) => {
+    }
+    get = async (req, res) => {
         try {
             const user = await userMethod.findUserByCondition(
                 {
@@ -55,4 +56,4 @@ const ticketController = {
     }
 }
 
-module.exports = ticketController
+module.exports = new TicketController

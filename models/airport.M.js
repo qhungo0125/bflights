@@ -20,7 +20,11 @@ class AirportModel extends BaseModel {
             { name: 1 },
             {
                 unique: true,
-                partialFilterExpression: { status: true }
+                partialFilterExpression: { status: true },
+                collation: {
+                    locale: "vi",
+                    strength: 2
+                }
             }
         )
     }

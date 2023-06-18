@@ -1,4 +1,4 @@
-const { ObjectId } = require("mongodb")
+const { ObjectId, MongoServerError } = require("mongodb")
 const { TransitionAirport, TransitionAirportModel } = require("../models/transitionAirport.M")
 const airportController = require("./airportController")
 const flightController = require("./flightController")
@@ -48,7 +48,11 @@ class TransitionAirportController {
             const newDoc = await TransitionAirportModel.getById(result.insertedId)
             res.status(200).json(newDoc)
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            if (error instanceof MongoServerError && [11000, 11001].includes(error.code)) {
+                const violatedField = Object.keys(error.keyPattern).join(', ')
+                error.message = `Transition Airport's ${violatedField} must be unique`;
+            }
+            res.status(500).json({ error: error.message });
         }
     }
     get = async (req, res) => {

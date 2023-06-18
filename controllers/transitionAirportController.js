@@ -38,6 +38,10 @@ class TransitionAirportController {
         if (!await airportController.checkId(airportId)) {
             throw new Error("Invalid Airport's id")
         }
+        // check transitionDuration is an integer
+        if (!Number.isInteger(transitionDuration)) {
+            throw new Error("Transition Duration must be an integer")
+        }
     }
     post = async (req, res) => {
         try {

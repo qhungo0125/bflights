@@ -7,7 +7,7 @@ class FlightStatisticController {
         try {
             const flightStatistic = await
                 flightStatisticModel.getByFlightAndTicketClass(flightId, classOfTicket)
-            if(flightStatistic){
+            if (flightStatistic) {
                 return true
             } else {
                 return false
@@ -42,6 +42,17 @@ class FlightStatisticController {
         if (flightStatisticObj._id && !await this.checkExistedId()) {
             throw new Error("FlightStatistic's id is invalid")
         }
+
+        // check numberOfSeat is an integer
+        if (!Number.isInteger(numberOfSeat)) {
+            throw new Error("Number of seat must be an integer")
+        }
+
+        // check price is an integer
+        if (!Number.isInteger(price)) {
+            throw new Error("Price must be an integer")
+        }
+
         // check flightId
         if (!await flightController.checkExistedId(flightId)) {
             throw new Error("Flight's id is invalid ")

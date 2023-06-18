@@ -33,6 +33,10 @@ class flightController {
             throw new Error("Invalid date-time")
         }
 
+        if (!Number.isInteger(flight.flightDuration)) {
+            throw new Error("Flight Duration must be an interger")
+        }
+
         if (!await airportController.checkId(flight.fromAirport)
             || !await airportController.checkId(flight.toAirport)) {
             throw new Error("Airport not exist")
@@ -73,7 +77,7 @@ class flightController {
             const { fromAirport,
                 toAirport,
                 dateTime
-            } = req.params 
+            } = req.params
 
             let parameters = [fromAirport,
                 toAirport,

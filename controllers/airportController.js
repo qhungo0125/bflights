@@ -1,3 +1,4 @@
+const { MongoServerError } = require('mongodb');
 const { Airport, airportModel } = require('../models/airport.M');
 
 const airportController = {
@@ -33,6 +34,10 @@ const airportController = {
             const result = await airportModel.addNew(newAirport);
             res.status(200).json(await airportModel.getById(result.insertedId));
         } catch (error) {
+            if (error instanceof MongoServerError && [11000, 11001].includes(error.code)) {
+                const violatedField = Object.keys(error.keyPattern)[0];
+                error.message = `Airport's ${violatedField} must be unique`;
+            }
             res.status(500).json({ error: error.message });
         }
     },
@@ -45,6 +50,10 @@ const airportController = {
 
             res.status(200).json(result.value);
         } catch (error) {
+            if (error instanceof MongoServerError && [11000, 11001].includes(error.code)) {
+                const violatedField = Object.keys(error.keyPattern)[0];
+                error.message = `Airport's ${violatedField} must be unique`;
+            }
             res.status(500).json({ error: error.message });
         }
     },

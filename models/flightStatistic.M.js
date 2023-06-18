@@ -88,6 +88,19 @@ class FlightStatisticModel extends BaseModel {
         )
         return res
     }
+    async increaseEmptySeat(flightId, classOfTicket) {
+        const res = await this.collection.updateOne(
+            {
+                flightId: new ObjectId(flightId),
+                classOfTicket: new ObjectId(classOfTicket),
+                $expr: { $lt: ["$numberOfEmptySeat", "$numberOfSeat"] }
+            },
+            {
+                $inc: { numberOfEmptySeat: 1 }
+            }
+        )
+        return res
+    }
     async updateById(flightStatisticObj) {
         const { _id, ...flightStatisticInfo } = flightStatisticObj
         const res = await this.collection.updateOne(
@@ -132,9 +145,9 @@ class FlightStatisticModel extends BaseModel {
         )
         return res
     }
-    async getByFlightAndTicketClass(flightId, classOfTicket){
+    async getByFlightAndTicketClass(flightId, classOfTicket) {
         const res = await this.collection.findOne({
-            flightId : flightId,
+            flightId: flightId,
             classOfTicket: classOfTicket
         })
         return res

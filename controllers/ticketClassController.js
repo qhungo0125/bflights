@@ -13,6 +13,14 @@ class TicketClassController {
         }
 
     }
+    all = async (req, res) => {
+        try {
+            const ticketClasses = await ticketClassMethod.getAll()
+            res.status(200).json(ticketClasses)
+        } catch (error) {
+            res.status(500).json({ error: error.message })
+        }
+    }
 }
 
 module.exports = new TicketClassController

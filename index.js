@@ -27,6 +27,7 @@ app.use('/flightStatistic', route.flightStatistic)
 app.use('/ticket', route.ticket)
 app.use('/transition-airport', route.transitionAirport)
 app.use('/report', route.report)
+app.use('/ticket-class',route.ticketClass)
 
 
 

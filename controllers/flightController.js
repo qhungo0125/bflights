@@ -2,8 +2,11 @@
 const { ObjectId } = require('mongodb')
 const { Flight, flightModel } = require('../models/flight.M')
 const airportController = require('./airportController')
+const { termsMethod } = require('../models/terms')
+const termsController = require('./termsController')
 
 class flightController {
+    
     checkExistedId = async (id) => {
         try {
             const res = await flightModel.getById(id)
@@ -40,6 +43,7 @@ class flightController {
         if (!Number.isInteger(flight.flightDuration)) {
             throw new Error("Flight Duration must be an interger")
         }
+        await termsController.checkValidFlightDuration(flight.flightDuration)
 
         if (!await airportController.checkId(flight.fromAirport)
             || !await airportController.checkId(flight.toAirport)) {

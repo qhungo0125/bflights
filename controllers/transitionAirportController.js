@@ -2,8 +2,12 @@ const { ObjectId, MongoServerError } = require("mongodb")
 const { TransitionAirport, TransitionAirportModel } = require("../models/transitionAirport.M")
 const airportController = require("./airportController")
 const flightController = require("./flightController")
+const { termsMethod } = require("../models/terms")
+const termsController = require("./termsController")
 
 class TransitionAirportController {
+    
+    
     checkExistedId = async (id) => {
         try {
             const foundDoc = await TransitionAirportModel.getById(id)
@@ -42,12 +46,18 @@ class TransitionAirportController {
         if (!Number.isInteger(transitionDuration)) {
             throw new Error("Transition Duration must be an integer")
         }
+        await termsController.checkValidTranstionDuration(transitionDuration)
     }
     post = async (req, res) => {
         try {
+
             const { flightId, airportId, transitionDuration, note } = req.body
             const transitionAirportObj = new TransitionAirport(null, flightId, airportId, transitionDuration, note)
             await this.checkValidObj(transitionAirportObj)
+
+            // check rule of 'maxTransitions'
+            await termsController.checkInsertionAbility(flightId)
+
             const result = await TransitionAirportModel.add(transitionAirportObj)
             const newDoc = await TransitionAirportModel.getById(result.insertedId)
             res.status(200).json(newDoc)

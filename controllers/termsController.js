@@ -1,17 +1,24 @@
 const { createDebug } = require('../untils/DebugHelper');
 const debug = new createDebug('/controllers/termsController');
 const { termsMethod } = require('../models/terms');
+const { TransitionAirportModel } = require('../models/transitionAirport.M');
 
-const termsController = {
-  getTerms: async (req, res) => {
+class TermsController {
+  constructor() {
+    this.getTermsData()
+  }
+  getTermsData = async () => {
+    this.terms = await termsMethod.getTerms()
+  }
+  getTerms = async (req, res) => {
     try {
       const resp = await termsMethod.getTerms();
       res.status(200).json(resp);
     } catch (err) {
       res.status(500).json(err);
     }
-  },
-  initTerms: async (req, res) => {
+  }
+  initTerms = async (req, res) => {
     try {
       const resp = await termsMethod.getTermsArray();
       // debug(resp);
@@ -42,8 +49,8 @@ const termsController = {
       debug(error);
       return res.status(500).json(error);
     }
-  },
-  updateTerm: async (req, res) => {
+  }
+  updateTerm = async (req, res) => {
     const { name, value } = req.body;
     debug(name, value);
     const terms = [
@@ -71,11 +78,33 @@ const termsController = {
       if (!update.value) {
         return res.status(500).json({ error: 'Fail to update terms' });
       }
+      this.getTermsData()
       return res.status(200).json('update success');
     } catch (err) {
       return res.status(500).json(err);
     }
   }
+
+  checkValidFlightDuration = async (flightDuration) => {
+    if (flightDuration < this.terms.minTimeFlight) {
+      throw new Error(`Flight Duration must be greater than ${this.terms.minTimeFlight}`)
+    }
+  }
+
+  checkInsertionAbility = async (flightId) => {
+    const transitionAirports = await TransitionAirportModel.getAllOfFlight(flightId)
+    if (transitionAirports.length >= this.terms.maxTransitions) {
+      throw new Error("Maximum Transition Airports Reached")
+    }
+  }
+
+  checkValidTranstionDuration = async (transitionDuration) => {
+    if (transitionDuration < this.terms.minPauseTime ||
+      transitionDuration > this.terms.maxPauseTime) {
+      throw new Error(`Transition Duration must be in [${this.terms.minPauseTime},
+         ${this.terms.maxPauseTime}]`)
+    }
+  }
 };
 
-module.exports = termsController;
+module.exports = new TermsController;

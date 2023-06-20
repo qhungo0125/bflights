@@ -1,3 +1,4 @@
+const { ObjectId } = require('mongodb');
 const { database } = require('../configs/mongodb');
 const databaseUser = database.collection('users');
 const { createDebug } = require('../untils/DebugHelper');
@@ -42,6 +43,15 @@ const userMethod = {
             }
         );
 
+        return update;
+    },
+    deleteUser: async ({ _id, status = 'invalid' }) => {
+        const update = await databaseUser.findOneAndUpdate(
+            { _id: new ObjectId(_id) },
+            {
+                $set: { status }
+            }
+        );
         return update;
     }
 };

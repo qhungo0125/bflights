@@ -5,11 +5,13 @@ const {
     verifyAdminRole,
     verifyCustomerRole,
     getUserData,
-    getAllUser
+    getAllUser,
+    deleteUser
 } = require('../controllers/userController');
 const { ticketClassMethod } = require('../models/ticketClass');
 
-router.get('/', getAllUser);
+router.get('/', verifyAdminRole, getAllUser);
+router.delete('/', verifyAdminRole, deleteUser);
 
 router.get('/test', verifyAccessToken, async (req, res) => {
     try {

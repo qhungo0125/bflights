@@ -258,6 +258,22 @@ const userController = {
         } catch (error) {
             return res.status(500).json({ error });
         }
+    },
+    deleteUser: async (req, res) => {
+        const { _id } = req.body;
+        console.log(req.body);
+        if (!_id) {
+            return res.status(500).json({ error: 'Missing required value' });
+        }
+        try {
+            const user = await userMethod.deleteUser({ _id });
+            debug(user);
+            if (user) {
+                return res.status(200).json({ data: 'success' });
+            }
+        } catch (error) {
+            return res.status(500).json({ error });
+        }
     }
 };
 

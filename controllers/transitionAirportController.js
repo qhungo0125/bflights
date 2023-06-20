@@ -2,7 +2,6 @@ const { ObjectId, MongoServerError } = require("mongodb")
 const { TransitionAirport, TransitionAirportModel } = require("../models/transitionAirport.M")
 const airportController = require("./airportController")
 const flightController = require("./flightController")
-const { termsMethod } = require("../models/terms")
 const termsController = require("./termsController")
 
 class TransitionAirportController {

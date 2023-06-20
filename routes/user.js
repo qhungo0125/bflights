@@ -1,26 +1,14 @@
 const router = require('express').Router();
 const { database } = require('../configs/mongodb');
+const userController = require('../controllers/userController');
 const {
     verifyAccessToken,
     verifyAdminRole,
-    verifyCustomerRole,
-    getUserData,
-    getAllUser,
-    deleteUser
+    verifyCustomerRole
 } = require('../controllers/userController');
 const { ticketClassMethod } = require('../models/ticketClass');
 
-router.get('/', verifyAdminRole, getAllUser);
-router.delete('/', verifyAdminRole, deleteUser);
-
-router.get('/test', verifyAccessToken, async (req, res) => {
-    try {
-        // await ticketClassMethod.init();
-        const resp = await ticketClassMethod.getAll();
-        res.status(200).json(resp);
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
+router.get('/', verifyAdminRole, userController.getAllUser);
+router.delete('/', verifyAdminRole, userController.deleteUser);
 
 module.exports = router;

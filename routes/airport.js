@@ -1,5 +1,6 @@
+const airportController = require('../controllers/airportController');
+
 const router = require('express').Router();
-const airportController = require('../controllers/airportController')
 
 router.get('/', airportController.all);
 router.get('/:airportId',airportController.get)

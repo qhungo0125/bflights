@@ -11,7 +11,8 @@ class TicketClassController {
         }
     };
     all = async (req, res) => {
-        const { page = 1, perPage = 5 } = req.query;
+        const { page = process.env.page, perPage = process.env.perPage } =
+            req.query;
         try {
             const ticketClasses = await ticketClassMethod.getAll();
 

@@ -1,133 +1,149 @@
-
-const { ObjectId } = require('mongodb')
-const { Flight, flightModel } = require('../models/flight.M')
-const airportController = require('./airportController')
+const { ObjectId } = require('mongodb');
+const { Flight, flightModel } = require('../models/flight.M');
+const airportController = require('./airportController');
 
 class flightController {
     checkExistedId = async (id) => {
         try {
-            const res = await flightModel.getById(id)
-            if (res)
-                return true
-            else
-                return false
+            const res = await flightModel.getById(id);
+            if (res) return true;
+            else return false;
         } catch (error) {
-            return false
+            return false;
         }
-    }
+    };
     checkValidFlightObj = async (flight) => {
         // Check missing attributes
-        if (!flight.dateTime ||
+        if (
+            !flight.dateTime ||
             !flight.flightDuration ||
             !flight.fromAirport ||
-            !flight.toAirport) {
-            throw new Error('Missing required value')
+            !flight.toAirport
+        ) {
+            throw new Error('Missing required value');
         }
 
         // Check validation of attributes
         if (flight._id && !(await this.checkExistedId(flight._id))) {
-            throw new Error("Flight's is is not existed")
+            throw new Error("Flight's is is not existed");
         }
 
         if (isNaN(flight.dateTime)) {
-            throw new Error("Invalid date-time")
+            throw new Error('Invalid date-time');
         }
 
         if (flight.dateTime < new Date()) {
-            throw new Error("Flight datetime can not be in the past")
+            throw new Error('Flight datetime can not be in the past');
         }
 
         if (!Number.isInteger(flight.flightDuration)) {
-            throw new Error("Flight Duration must be an interger")
+            throw new Error('Flight Duration must be an interger');
         }
 
-        if (!await airportController.checkId(flight.fromAirport)
-            || !await airportController.checkId(flight.toAirport)) {
-            throw new Error("Airport not exist")
+        if (
+            !(await airportController.checkId(flight.fromAirport)) ||
+            !(await airportController.checkId(flight.toAirport))
+        ) {
+            throw new Error('Airport not exist');
         }
-    }
+    };
     post = async (req, res) => {
         try {
-            const {
-                dateTime, flightDuration, fromAirport, toAirport,
-            } = req.body
+            const { dateTime, flightDuration, fromAirport, toAirport } =
+                req.body;
             // Check valid flight obj
             const newFlightObj = new Flight(
-                null, dateTime, flightDuration,
-                fromAirport, toAirport)
-            await this.checkValidFlightObj(newFlightObj)
+                null,
+                dateTime,
+                flightDuration,
+                fromAirport,
+                toAirport
+            );
+            await this.checkValidFlightObj(newFlightObj);
 
             // insert into database
-            const insertNewFlightResult = await flightModel.add(newFlightObj)
+            const insertNewFlightResult = await flightModel.add(newFlightObj);
             res.status(200).json(
-                await flightModel.getById(
-                    insertNewFlightResult.insertedId
-                )
-            )
+                await flightModel.getById(insertNewFlightResult.insertedId)
+            );
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error.message });
         }
-    }
+    };
     get = async (req, res) => {
+        const { page = process.env.page, perPage = process.env.perPage } =
+            req.query;
         try {
-            const flights = await flightModel.all()
-            res.status(200).json(flights)
+            const flights = await flightModel.all();
+
+            const startIdx = (page - 1) * perPage;
+            const endIdx = page * perPage;
+
+            const flightsData = flights.slice(startIdx, endIdx);
+
+            if (flightsData.length == 0) {
+                return res.status(200).json([]);
+            }
+
+            return res.status(200).json(flights);
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error.message });
         }
-    }
+    };
     search = async (req, res) => {
         try {
-            const { fromAirport,
-                toAirport,
-                dateTime
-            } = req.params
+            const { fromAirport, toAirport, dateTime } = req.params;
 
-            let parameters = [fromAirport,
-                toAirport,
-                dateTime]
+            let parameters = [fromAirport, toAirport, dateTime];
             parameters = parameters.map((parameter) => {
                 try {
-                    return parameter === "undefined" ? undefined : new ObjectId(parameter)
+                    return parameter === 'undefined'
+                        ? undefined
+                        : new ObjectId(parameter);
                 } catch (error) {
-                    throw new Error("Invalid Id")
+                    throw new Error('Invalid Id');
                 }
-            })
+            });
             const searchResults = await flightModel.getSearchResult(
                 ...parameters
-            )
-            res.status(200).json(searchResults)
+            );
+            res.status(200).json(searchResults);
         } catch (error) {
-            console.log(error)
-            res.status(500).json({ error: error.message })
+            console.log(error);
+            res.status(500).json({ error: error.message });
         }
-    }
+    };
     put = async (req, res) => {
         try {
-            const { flightId } = req.params
-            const {
-                dateTime, flightDuration, fromAirport, toAirport
-            } = req.body
-            const flightObj = new Flight(flightId, dateTime, flightDuration, fromAirport, toAirport)
-            await this.checkValidFlightObj(flightObj)
-            const result = await flightModel.updateById(flightObj)
-            res.status(200).json(result.value)
+            const { flightId } = req.params;
+            const { dateTime, flightDuration, fromAirport, toAirport } =
+                req.body;
+            const flightObj = new Flight(
+                flightId,
+                dateTime,
+                flightDuration,
+                fromAirport,
+                toAirport
+            );
+            await this.checkValidFlightObj(flightObj);
+            const result = await flightModel.updateById(flightObj);
+            res.status(200).json(result.value);
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error.message });
         }
-    }
+    };
     delete = async (req, res) => {
         try {
-            const { flightId } = req.params
-            if (!await this.checkExistedId(flightId)) {
-                throw new Error("Flight's id not existed")
+            const { flightId } = req.params;
+            if (!(await this.checkExistedId(flightId))) {
+                throw new Error("Flight's id not existed");
             }
-            const result = await flightModel.deleteById(flightId)
-            res.status(200).send("Delete Flight successful")
+            const result = await flightModel.deleteById(flightId);
+            res.status(200).send('Delete Flight successful');
         } catch (error) {
-            res.status(500).json({ error: error.message })
+            res.status(500).json({ error: error.message });
         }
-    }
+    };
 }
 
-module.exports = new flightController
+module.exports = new flightController();

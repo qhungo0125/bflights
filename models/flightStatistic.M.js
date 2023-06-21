@@ -28,22 +28,34 @@ class FlightStatisticModel extends BaseModel {
         )
     }
     async add(flightStatistic) {
+        const { _id, ...flightStatisticInfo } = flightStatistic
         const res = await this.collection
-            .insertOne(flightStatistic)
+            .insertOne({
+                ...flightStatisticInfo,
+                status: true
+            })
         return res;
     }
     async getById(id) {
         const res = await this.collection.findOne(
-            { _id: new ObjectId(id) }
+            {
+                _id: new ObjectId(id),
+                status: true
+            }
         )
         return res
     }
-    async getByFlightId(flightId) {
+    async getByFlightId(flightId, isReport) {
         const res = await this.collection.aggregate([
             {
-                $match: {
-                    flightId: new ObjectId(flightId)
-                }
+                $match: isReport
+                    ?{
+                        flightId: new ObjectId(flightId)
+                    }
+                    : {
+                        flightId: new ObjectId(flightId),
+                        status: true,
+                    }
             },
             {
                 $lookup: {
@@ -80,6 +92,7 @@ class FlightStatisticModel extends BaseModel {
             {
                 flightId: new ObjectId(flightId),
                 classOfTicket: new ObjectId(classOfTicket),
+                status: true,
                 numberOfEmptySeat: { $gt: 0 }
             },
             {
@@ -93,6 +106,7 @@ class FlightStatisticModel extends BaseModel {
             {
                 flightId: new ObjectId(flightId),
                 classOfTicket: new ObjectId(classOfTicket),
+                status: true,
                 $expr: { $lt: ["$numberOfEmptySeat", "$numberOfSeat"] }
             },
             {
@@ -104,7 +118,10 @@ class FlightStatisticModel extends BaseModel {
     async updateById(flightStatisticObj) {
         const { _id, ...flightStatisticInfo } = flightStatisticObj
         const res = await this.collection.updateOne(
-            { _id: new ObjectId(_id) },
+            {
+                _id: new ObjectId(_id),
+                status: true
+            },
             {
                 $set: {
                     ...flightStatisticInfo
@@ -119,6 +136,7 @@ class FlightStatisticModel extends BaseModel {
             {
                 flightId: flightId,
                 classOfTicket: classOfTicket,
+                status: true,
                 $expr: {
                     $gte: [
                         flightStatisticInfo.numberOfSeat,
@@ -148,8 +166,20 @@ class FlightStatisticModel extends BaseModel {
     async getByFlightAndTicketClass(flightId, classOfTicket) {
         const res = await this.collection.findOne({
             flightId: flightId,
-            classOfTicket: classOfTicket
+            classOfTicket: classOfTicket,
+            status: true
         })
+        return res
+    }
+    async deleteByTicketClass(classOfTicket) {
+        const res = await this.collection.updateMany(
+            { classOfTicket: new ObjectId(classOfTicket) },
+            {
+                $set: {
+                    status: false
+                }
+            }
+        )
         return res
     }
 }

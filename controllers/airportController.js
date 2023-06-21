@@ -48,7 +48,9 @@ class AirportController {
             const { airportId } = req.params;
             const { name } = req.body;
             const airportObj = new Airport(airportId, name);
-            await this.checkId(airportId)
+            if (!await this.checkId(airportId)) {
+                throw new Error("Airport's id is invalid")
+            }
             const result = await airportModel.updateById(airportObj);
 
             res.status(200).json(result.value);
@@ -63,7 +65,9 @@ class AirportController {
     delete = async (req, res) => {
         try {
             const { airportId } = req.params;
-            await this.checkId(airportId)
+            if (!await this.checkId(airportId)) {
+                throw new Error("Airport's id is invalid")
+            }
             const result = await airportModel.deleteById(airportId);
             if (result.matchedCount === 0) throw new Error(`Airport not found`);
             res.status(200).json(result);

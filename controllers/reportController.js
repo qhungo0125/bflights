@@ -26,8 +26,7 @@ class ReportController {
         return res
     }
     genFlightReport = async (flight) => {
-        const flightStatistics = await flightStatisticModel.getByFlightId(flight._id)
-
+        const flightStatistics = await flightStatisticModel.getByFlightId(flight._id, true)
         const numberOfTicket = this.countTickets(flightStatistics)
         const numberOfSeat = this.calculateTotalSeat(flightStatistics)
         const percentage = Converter.toPercentageString(
@@ -84,7 +83,7 @@ class ReportController {
 
                 return acc
             }, {})
-            
+
             // calculate percentage
             Object.keys(yearReport).forEach(month => {
                 const monthReport = yearReport[month];

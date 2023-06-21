@@ -111,6 +111,17 @@ class TicketModel extends BaseModel {
         )
         return res
     }
+    async deleteByTicketClass(classOfTicket) {
+        const res = await this.collection.updateMany(
+            { classOfTicket: new ObjectId(classOfTicket) },
+            {
+                $set: {
+                    status: false
+                }
+            }
+        )
+        return res
+    }
 }
 module.exports = {
     Ticket,

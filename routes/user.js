@@ -10,5 +10,6 @@ const { ticketClassMethod } = require('../models/ticketClass');
 
 router.get('/', verifyAdminRole, userController.getAllUser);
 router.delete('/', verifyAdminRole, userController.deleteUser);
+router.post('/userinfo', verifyAccessToken, userController.getUserData);
 
 module.exports = router;

@@ -44,14 +44,6 @@ class FlightModel extends BaseModel {
         return flights
     }
     async getById(id) {
-        // const pipeline = {
-        //     $match: { _id: new ObjectId(id) }
-        // }
-        // const flights = (await this.getFlights(pipeline))
-        // if (flights.length > 0)
-        //     return flights[0]
-        // else
-        //     return null
         const flight = await this.collection.findOne({
             _id: new ObjectId(id),
             status: true
@@ -81,13 +73,6 @@ class FlightModel extends BaseModel {
         criteriaObj = Object.fromEntries(
             Object.entries(criteriaObj).filter(([key, value]) => value !== undefined)
         );
-        // const criteria =
-        // {
-        //     $match: criteriaObj
-        // }
-        // const flights = criteriaObj
-        //     ? await this.getFlights(criteria)
-        //     : await this.getFlights()
         const flights = await this.collection.find(
             {
                 ...criteriaObj,
@@ -118,6 +103,32 @@ class FlightModel extends BaseModel {
             }
         }
         const res = await this.collection.find(filter).toArray()
+        return res
+    }
+    async getReport(genReportFunc, year) {
+        const filter = {
+            $match: {
+                status: true
+            }
+        }
+        if (year) {
+            filter.$match.dateTime = {
+                $gte: new Date(year, 0, 1),
+                $lt: new Date(year + 1, 0, 1)
+            }
+        }
+        const res = await this.collection.aggregate([
+            filter,
+            {
+                $lookup: {
+                    from: 'flightStatistic', localField: '_id', foreignField: 'flightId',
+                    as: 'flightStatistics'
+                }
+            },
+            { $project: { dateTime: 1, flightStatistics: 1, dateTime: 1 } }
+        ]).map((doc) => {
+            return { dateTime: doc.dateTime, flightId: doc._id, ...genReportFunc(doc.flightStatistics) }
+        }).toArray()
         return res
     }
 }

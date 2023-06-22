@@ -25,8 +25,8 @@ class ReportController {
         }, 0)
         return res
     }
-    genFlightReport = async (flight) => {
-        const flightStatistics = await flightStatisticModel.getByFlightId(flight._id, true)
+    genFlightReport = (flightStatistics) => {
+        // const flightStatistics = await flightStatisticModel.getByFlightId(flight._id, true)
         const numberOfTicket = this.countTickets(flightStatistics)
         const numberOfSeat = this.calculateTotalSeat(flightStatistics)
         const percentage = Converter.toPercentageString(
@@ -34,7 +34,7 @@ class ReportController {
         )
         const revenue = this.calculateRevenue(flightStatistics)
         return {
-            flightId: flight._id,
+            // flightId: flight._id,
             numberOfTicket,
             numberOfSeat,
             percentage,
@@ -43,28 +43,18 @@ class ReportController {
     }
     get = async (req, res) => {
         try {
-            const flights = await flightModel.all()
-            const flightReports = await Promise.all(
-                flights.map(async (flight) => {
-                    return await this.genFlightReport(flight)
-                }))
-            res.status(200).json(flightReports)
+            const result = await flightModel.getReport(this.genFlightReport)
+            res.status(200).json(result)
         } catch (error) {
+            console.log(error)
             res.status(500).json({ error: error.message })
         }
     }
+    
     getByYear = async (req, res) => {
         try {
             const { year } = req.params
-            const flights = await flightModel.getByYear(year)
-            const flightReports = await Promise.all(
-                flights.map(async (flight) => {
-                    const flightReport = await this.genFlightReport(flight)
-                    return {
-                        dateTime: flight.dateTime,
-                        ...flightReport
-                    }
-                }))
+            const flightReports = await flightModel.getReport(this.genFlightReport, year)
             const yearReport = flightReports.reduce((acc, flightReport) => {
                 const month = flightReport.dateTime.getMonth() + 1
                 if (!acc.hasOwnProperty(month)) {

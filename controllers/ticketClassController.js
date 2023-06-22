@@ -19,21 +19,10 @@ class TicketClassController {
         }
     }
     all = async (req, res) => {
-        const { page = process.env.page, perPage = process.env.perPage } =
-            req.query;
         try {
             const ticketClasses = await ticketClassMethod.getAll();
 
-            const startIdx = (page - 1) * perPage;
-            const endIdx = page * perPage;
-
-            const tcData = ticketClasses.slice(startIdx, endIdx);
-
-            if (tcData.length == 0) {
-                return res.status(200).json([]);
-            }
-
-            return res.status(200).json(tcData);
+            return res.status(200).json(ticketClasses);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

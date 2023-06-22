@@ -90,7 +90,7 @@ class flightController {
                 return res.status(200).json([]);
             }
 
-            return res.status(200).json(flights);
+            return res.status(200).json(flightsData);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

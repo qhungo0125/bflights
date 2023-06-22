@@ -97,20 +97,26 @@ class flightController {
     };
     search = async (req, res) => {
         try {
-            const { fromAirport, toAirport, dateTime } = req.params;
+            let { fromAirport, toAirport, dateTime } = req.params;
+            try {
+                fromAirport = fromAirport === 'undefined' ? undefined : new ObjectId(fromAirport);
+            } catch (error) {
+                throw new Error('Invalid Id');
+            }
 
-            let parameters = [fromAirport, toAirport, dateTime];
-            parameters = parameters.map((parameter) => {
-                try {
-                    return parameter === 'undefined'
-                        ? undefined
-                        : new ObjectId(parameter);
-                } catch (error) {
-                    throw new Error('Invalid Id');
-                }
-            });
+            try {
+                toAirport = toAirport === 'undefined' ? undefined : new ObjectId(toAirport);
+            } catch (error) {
+                throw new Error('Invalid Id');
+            }
+
+            dateTime = dateTime === 'undefined' ? undefined : new Date(dateTime);
+            if (isNaN(dateTime)) {
+                throw new Error("Invalid date-time")
+            }
+
             const searchResults = await flightModel.getSearchResult(
-                ...parameters
+                fromAirport, toAirport, dateTime
             );
             res.status(200).json(searchResults);
         } catch (error) {

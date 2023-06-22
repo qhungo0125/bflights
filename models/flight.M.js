@@ -73,6 +73,18 @@ class FlightModel extends BaseModel {
         criteriaObj = Object.fromEntries(
             Object.entries(criteriaObj).filter(([key, value]) => value !== undefined)
         );
+        if (criteriaObj.hasOwnProperty("dateTime")) {
+            new Date().getFullYear
+            const oldDate = criteriaObj.dateTime
+            const fromDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate())
+            const toDate = new Date(oldDate.getFullYear(), oldDate.getMonth(), oldDate.getDate() + 1)
+
+            criteriaObj.dateTime = {
+                $gte: fromDate,
+                $lt: toDate
+            }
+        }
+        console.log(criteriaObj)
         const flights = await this.collection.find(
             {
                 ...criteriaObj,

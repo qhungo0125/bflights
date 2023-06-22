@@ -2,7 +2,6 @@
 const { ObjectId } = require('mongodb')
 const { Flight, flightModel } = require('../models/flight.M')
 const airportController = require('./airportController')
-const { termsMethod } = require('../models/terms')
 const termsController = require('./termsController')
 
 class flightController {
@@ -110,9 +109,13 @@ class flightController {
                 throw new Error('Invalid Id');
             }
 
-            dateTime = dateTime === 'undefined' ? undefined : new Date(dateTime);
-            if (isNaN(dateTime)) {
-                throw new Error("Invalid date-time")
+            if (dateTime === 'undefined') {
+                dateTime = new Date(dateTime);
+                if (isNaN(dateTime)) {
+                    throw new Error("Invalid date-time")
+                }
+            } else {
+                dateTime = undefined
             }
 
             const searchResults = await flightModel.getSearchResult(

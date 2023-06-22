@@ -110,12 +110,13 @@ class flightController {
             }
 
             if (dateTime === 'undefined') {
+                dateTime = undefined
+
+            } else {
                 dateTime = new Date(dateTime);
                 if (isNaN(dateTime)) {
                     throw new Error("Invalid date-time")
                 }
-            } else {
-                dateTime = undefined
             }
 
             const searchResults = await flightModel.getSearchResult(

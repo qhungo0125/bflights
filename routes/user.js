@@ -6,9 +6,10 @@ const {
     verifyAdminRole,
     verifyCustomerRole
 } = require('../controllers/userController');
-const { ticketClassMethod } = require('../models/ticketClass');
+const pagination = require('../untils/Pagination');
 
-router.get('/', verifyAdminRole, userController.getAllUser);
+router.get('/', verifyAdminRole, pagination, userController.getAllUser);
+
 router.delete('/', verifyAdminRole, userController.deleteUser);
 router.post('/userinfo', verifyAccessToken, userController.getUserData);
 

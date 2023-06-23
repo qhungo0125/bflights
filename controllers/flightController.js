@@ -76,22 +76,10 @@ class flightController {
             res.status(500).json({ error: error.message })
         }
     }
-    get = async (req, res) => {
-        const { page = process.env.page, perPage = process.env.perPage } =
-            req.query;
+    getAll = async (req, res) => {
         try {
             const flights = await flightModel.all();
-
-            const startIdx = (page - 1) * perPage;
-            const endIdx = page * perPage;
-
-            const flightsData = flights.slice(startIdx, endIdx);
-
-            if (flightsData.length == 0) {
-                return res.status(200).json([]);
-            }
-
-            return res.status(200).json(flightsData);
+            return res.status(200).json(flights);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

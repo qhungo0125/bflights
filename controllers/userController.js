@@ -243,29 +243,22 @@ const userController = {
         }
     },
     getAllUser: async (req, res) => {
-        const { page = process.env.page, perPage = process.env.perPage } =
-            req.query;
         try {
             const users = await userMethod.getUsers();
             debug(users);
-
-            const startIdx = (page - 1) * perPage;
-            const endIdx = page * perPage;
-
-            const usersData = users.slice(startIdx, endIdx);
-
-            if (usersData.length == 0) {
-                res.status(200).json({ users: [] });
+  
+            if (users.length == 0) {
+                res.status(200).json([]);
             }
 
-            const usersDataFilter = usersData.map((u) => {
+            const usersDataFilter = users.map((u) => {
                 const { password, refreshToken, ...data } = u;
                 return {
                     ...data
                 };
             });
-            if (usersData.length !== 0) {
-                return res.status(200).json({ users: usersDataFilter });
+            if (users.length !== 0) {
+                return res.status(200).json(usersDataFilter);
             }
         } catch (error) {
             return res.status(500).json({ error });

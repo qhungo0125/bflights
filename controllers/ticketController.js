@@ -81,23 +81,11 @@ class TicketController {
         }
     };
     get = async (req, res) => {
-        const { page = process.env.page, perPage = process.env.perPage } =
-            req.query;
-
         try {
             const user = await this.getUser(req);
             const tickets = await TicketModel.getAllTicket(user._id);
 
-            const startIdx = (page - 1) * perPage;
-            const endIdx = page * perPage;
-
-            const tcData = tickets.slice(startIdx, endIdx);
-
-            if (tcData.length == 0) {
-                return res.status(200).json([]);
-            }
-
-            res.status(200).json(tcData);
+            res.status(200).json(tickets);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }

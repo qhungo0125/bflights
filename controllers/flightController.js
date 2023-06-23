@@ -162,6 +162,23 @@ class flightController {
             res.status(500).json({ error: error.message });
         }
     };
+    getFlight = async (req, res) => {
+        try {
+            let { flightId } = req.params
+            try {
+                flightId = new ObjectId(flightId)
+            } catch (error) {
+                throw new Error("Invalid Id")
+            }
+            const flight = await flightModel.getById(flightId)
+            if (!flight) {
+                throw new Error("Flight's id not existed")
+            }
+            res.status(200).json(flight)
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = new flightController

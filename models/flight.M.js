@@ -131,6 +131,7 @@ class FlightModel extends BaseModel {
         }
         const res = await this.collection.aggregate([
             filter,
+            { $sort: { dateTime: -1 } },
             {
                 $lookup: {
                     from: 'flightStatistic', localField: '_id', foreignField: 'flightId',

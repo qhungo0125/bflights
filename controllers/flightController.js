@@ -2,7 +2,9 @@
 const { ObjectId } = require('mongodb')
 const { Flight, flightModel } = require('../models/flight.M')
 const airportController = require('./airportController')
-const termsController = require('./termsController')
+const termsController = require('./termsController');
+const { ticketClassMethod } = require('../models/ticketClass');
+const { TicketModel } = require('../models/ticket.M');
 
 class flightController {
     checkExistedId = async (id) => {
@@ -154,6 +156,7 @@ class flightController {
                 throw new Error("Flight's id not existed");
             }
             const result = await flightModel.deleteById(flightId);
+            TicketModel.deleteByFlightId(flightId)
             res.status(200).send('Delete Flight successful');
         } catch (error) {
             res.status(500).json({ error: error.message });

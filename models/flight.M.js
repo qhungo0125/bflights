@@ -36,6 +36,12 @@ class FlightModel extends BaseModel {
         )
         return res;
     }
+    async addNewTicketClass(classOfTicket) {
+        await this.collection.find({}).map(async (doc) => {
+            const flightStatistic = new FlightStatistic(null, doc._id, classOfTicket, 0, 0, null)
+            flightStatisticModel.add(flightStatistic)
+        }).toArray()
+    }
     async all() {
         // const flights = await this.getFlights()
         const flights = await this.collection.find(

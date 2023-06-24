@@ -2,6 +2,7 @@ const { MongoServerError } = require('mongodb');
 const { ticketClassMethod, TicKetClass } = require('../models/ticketClass');
 const { flightStatisticModel } = require('../models/flightStatistic.M');
 const { TicketModel } = require('../models/ticket.M');
+const { flightModel } = require('../models/flight.M');
 
 class TicketClassController {
     checkValidObj = async (ticketClassObj) => {
@@ -33,6 +34,7 @@ class TicketClassController {
             const ticketClassObj = new TicKetClass({ name })
             await this.checkValidObj(ticketClassObj)
             const result = await ticketClassMethod.add(ticketClassObj)
+            flightModel.addNewTicketClass(result.insertedId)
             res.status(200).json(result.doc)
         } catch (error) {
             if (error instanceof MongoServerError && [11000, 11001].includes(error.code)) {

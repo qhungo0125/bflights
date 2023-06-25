@@ -244,8 +244,9 @@ const userController = {
     },
     getAllUser: async (req, res) => {
         try {
-            const users = await userMethod.getUsers();
-            debug(users);
+            let users = await userMethod.getUsers();
+            users = users.filter((u) => u.status !== 'invalid');
+            //debug(users);
   
             if (users.length == 0) {
                 res.status(200).json([]);

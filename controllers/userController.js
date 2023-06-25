@@ -246,8 +246,10 @@ const userController = {
         const { page = process.env.page, perPage = process.env.perPage } =
             req.query;
         try {
-            const users = await userMethod.getUsers();
+            const usersdb = await userMethod.getUsers();
             debug(users);
+
+            const users = usersdb.filter((u) => u.status !== 'invalid');
 
             const startIdx = (page - 1) * perPage;
             const endIdx = page * perPage;

@@ -19,20 +19,18 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/auth', route.auth);
-app.use('/', route.user);
+app.use('/user', route.user);
 app.use('/terms', route.terms);
-app.use('/airport', route.airport)
-app.use('/flight', route.flight)
-app.use('/flightStatistic', route.flightStatistic)
-app.use('/ticket', route.ticket)
-app.use('/transition-airport', route.transitionAirport)
-app.use('/report', route.report)
-app.use('/ticket-class',route.ticketClass)
-
-
+app.use('/airport', route.airport);
+app.use('/flight', route.flight);
+app.use('/flightStatistic', route.flightStatistic);
+app.use('/ticket', route.ticket);
+app.use('/transition-airport', route.transitionAirport);
+app.use('/report', route.report);
+app.use('/ticket-class', route.ticketClass);
 
 // app.use("/auth", authen)
 
 app.listen(port, () => {
-  console.log('server is running at ', port);
+    console.log('server is running at ', port);
 });

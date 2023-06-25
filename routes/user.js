@@ -10,7 +10,7 @@ const pagination = require('../untils/Pagination');
 
 router.get('/', verifyAdminRole, pagination, userController.getAllUser);
 
-router.delete('/', verifyAdminRole, userController.deleteUser);
+router.post('/delete', verifyAdminRole, userController.deleteUser);
 router.post('/userinfo', verifyAccessToken, userController.getUserData);
 
 module.exports = router;

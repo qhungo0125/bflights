@@ -1,14 +1,14 @@
 const ticketController = require('../controllers/ticketController');
-const { verifyAccessToken } = require('../controllers/userController');
+const { verifyCustomerRole } = require('../controllers/userController');
 const pagination = require('../untils/Pagination');
 
 const router = require('express').Router();
 
-router.get('/', verifyAccessToken, pagination, ticketController.get)
+router.get('/', verifyCustomerRole, pagination, ticketController.get)
 
 
-router.post('/', verifyAccessToken, ticketController.post)
-router.delete('/:ticketId', verifyAccessToken,
+router.post('/', verifyCustomerRole, ticketController.post)
+router.delete('/:ticketId', verifyCustomerRole,
     ticketController.verifyTicketOwner,
     ticketController.delete)
 

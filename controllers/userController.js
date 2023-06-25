@@ -247,7 +247,7 @@ const userController = {
             req.query;
         try {
             const usersdb = await userMethod.getUsers();
-            debug(users);
+            // debug(users);
 
             const users = usersdb.filter((u) => u.status !== 'invalid');
 

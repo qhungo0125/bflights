@@ -5,7 +5,7 @@ const router = require('express').Router();
 
 router.get('/', pagination, flightController.getAll)
 router.get('/:flightId', flightController.getFlight)
-router.get('/:fromAirport/:toAirport/:dateTime', flightController.search)
+router.get('/:fromAirport/:toAirport/:dateTime',pagination, flightController.search)
 
 router.post('/', flightController.post)
 

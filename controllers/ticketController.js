@@ -3,6 +3,8 @@ const { flightStatisticModel } = require('../models/flightStatistic.M');
 const { Ticket, TicketModel } = require('../models/ticket.M');
 const { userMethod } = require('../models/user');
 const flightStatisticController = require('./flightStatisticController');
+const termsController = require('./termsController');
+const { flightModel } = require('../models/flight.M');
 class TicketController {
     getUser = async (request) => {
         const user = await userMethod.findUserByCondition({
@@ -52,6 +54,10 @@ class TicketController {
         ) {
             throw new Error('Flight Statistic is not existed');
         }
+
+
+        const flight = await flightModel.getById(flightId)
+        await termsController.checkValidBookedTime(new Date(), flight.dateTime)
     };
     post = async (req, res) => {
         try {
@@ -93,6 +99,8 @@ class TicketController {
     delete = async (req, res) => {
         try {
             const ticket = req.ticket;
+            const flight = await flightModel.getById(ticket.flightId)
+            await termsController.checkValidCancelTime(new Date(), flight.dateTime)
             const increaseEmptySeatResult =
                 await flightStatisticModel.increaseEmptySeat(
                     ticket.flightId,
@@ -109,7 +117,6 @@ class TicketController {
             }
             res.status(200).send();
         } catch (error) {
-            console.log(error);
             res.status(500).json({ error: error.message });
         }
     };

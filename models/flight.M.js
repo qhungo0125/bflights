@@ -90,7 +90,6 @@ class FlightModel extends BaseModel {
                 $lt: toDate
             }
         }
-        console.log(criteriaObj)
         const flights = await this.collection.find(
             {
                 ...criteriaObj,

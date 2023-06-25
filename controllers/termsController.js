@@ -2,6 +2,7 @@ const { createDebug } = require('../untils/DebugHelper');
 const debug = new createDebug('/controllers/termsController');
 const { termsMethod } = require('../models/terms');
 const { TransitionAirportModel } = require('../models/transitionAirport.M');
+const Converter = require('../untils/Converter');
 
 class TermsController {
   constructor() {
@@ -37,7 +38,9 @@ class TermsController {
       maxTransitions: 10,
       minPauseTime: 0,
       maxPauseTime: 10, // in minutes
-      quantityClasses: 3
+      quantityClasses: 3,
+      latestBookingTime: 1, // in hours
+      latestCancellationTime: 1 // in hours
     };
 
     debug(terms);
@@ -59,7 +62,9 @@ class TermsController {
       'maxTransitions',
       'minPauseTime',
       'maxPauseTime',
-      'quantityClasses'
+      'quantityClasses',
+      "latestBookingTime",
+      "latestCancellationTime"
     ];
 
     if (name.length == 0 || !terms.includes(name)) {
@@ -103,6 +108,18 @@ class TermsController {
       transitionDuration > this.terms.maxPauseTime) {
       throw new Error(`Transition Duration must be in [${this.terms.minPauseTime},
          ${this.terms.maxPauseTime}]`)
+    }
+  }
+
+  checkValidBookedTime = async (bookTime, flightTime) => {
+    if (new Date(bookTime.getTime() + Converter.convertHourtoMilisecond(this.terms.latestBookingTime)) > flightTime) {
+      throw new Error(`Ticket must be purchased at least ${this.terms.latestBookingTime} hour${this.terms.latestBookingTime > 1 ? 's' : ''} in advance.`)
+    }
+  }
+
+  checkValidCancelTime = async (cancelTime, flightTime) => {
+    if (new Date(cancelTime.getTime() + Converter.convertHourtoMilisecond(this.terms.latestCancellationTime)) > flightTime) {
+      throw new Error(`Ticket must be canceled at least ${this.terms.latestCancellationTime} hour${this.terms.latestCancellationTime > 1 ? 's' : ''} in advance.`)
     }
   }
 };

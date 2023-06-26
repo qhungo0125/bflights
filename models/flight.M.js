@@ -11,8 +11,8 @@ class Flight {
             this._id = _id ? new ObjectId(_id) : _id
             this.dateTime = new Date(dateTime)
             this.flightDuration = flightDuration
-            this.fromAirport = new ObjectId(fromAirport)
-            this.toAirport = new ObjectId(toAirport)
+            this.fromAirport = fromAirport ? new ObjectId(fromAirport) : fromAirport
+            this.toAirport = toAirport ? new ObjectId(toAirport) : toAirport
         } catch (error) {
             throw new Error("Invalid Id")
         }

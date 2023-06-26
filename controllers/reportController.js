@@ -53,7 +53,11 @@ class ReportController {
     
     getByYear = async (req, res) => {
         try {
-            const { year } = req.params
+            let { year } = req.params
+            year = parseInt(year)
+            if(!year){
+                throw new Error("Year must be an integer")
+            }
             const flightReports = await flightModel.getReport(this.genFlightReport, year)
             const yearReport = flightReports.reduce((acc, flightReport) => {
                 const month = flightReport.dateTime.getMonth() + 1

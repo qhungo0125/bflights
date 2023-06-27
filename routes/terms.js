@@ -4,7 +4,7 @@ const debug = new createDebug('/terms');
 const termsController = require('../controllers/termsController');
 const { verifyAdminRole } = require('../controllers/userController');
 
-router.get('/', verifyAdminRole, termsController.getTerms);
+router.get('/', termsController.getTerms);
 
 router.post('/init', verifyAdminRole, termsController.initTerms);
 

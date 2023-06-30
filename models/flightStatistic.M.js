@@ -39,8 +39,7 @@ class FlightStatisticModel extends BaseModel {
     async getById(id) {
         const res = await this.collection.findOne(
             {
-                _id: new ObjectId(id),
-                status: true
+                _id: new ObjectId(id)
             }
         )
         return res

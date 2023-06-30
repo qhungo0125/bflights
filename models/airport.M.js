@@ -47,7 +47,6 @@ class AirportModel extends BaseModel {
     async getById(id) {
         const res = await this.collection.findOne({
             _id: new ObjectId(id),
-            status: true
         })
         return res
     }

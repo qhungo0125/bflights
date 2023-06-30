@@ -1,4 +1,4 @@
-const { MongoServerError } = require('mongodb');
+const { MongoServerError, ObjectId } = require('mongodb');
 const { Airport, airportModel } = require('../models/airport.M');
 
 class AirportController {
@@ -16,9 +16,14 @@ class AirportController {
     }
     get = async (req, res) => {
         try {
-            const {
+            let {
                 airportId
             } = req.params;
+            try {
+                airportId = new ObjectId(airportId)
+            } catch (error) {
+                throw new Error("Invalid Id")
+            }
             const airport = await airportModel.getById(airportId);
             if (airport) {
                 res.status(200).json(airport);

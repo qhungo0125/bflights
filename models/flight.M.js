@@ -46,7 +46,7 @@ class FlightModel extends BaseModel {
         // const flights = await this.getFlights()
         const flights = await this.collection.find(
             { status: true }
-        ).toArray()
+        ).sort({ dateTime: -1 }).toArray()
         return flights
     }
     async getById(id) {
@@ -95,7 +95,7 @@ class FlightModel extends BaseModel {
                 ...criteriaObj,
                 status: true
             }
-        ).toArray()
+        ).sort({ dateTime: -1 }).toArray()
         return flights
     }
     async deleteById(id) {

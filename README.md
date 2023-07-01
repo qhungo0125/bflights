@@ -11,7 +11,7 @@ https://erd.dbdesigner.net/designer/schema/1685726649-untitled-4e5c19c7-2276-426
 
 ### Usage:
 Cách 1: Chạy server trên local.
-- ở thư mục gốc của folder blights -> mở Terminal -> yarn i -> yarn start
+- ở thư mục gốc của folder blights -> mở Terminal -> yarn -> yarn start
 Cách 2: Sử dụng API trực tiếp ở server đã deploy:
 - https://bflights.onrender.com/
 

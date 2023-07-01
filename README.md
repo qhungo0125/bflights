@@ -9,6 +9,12 @@ https://erd.dbdesigner.net/designer/schema/1685726649-untitled-4e5c19c7-2276-426
 -   Web app use for booking plane ticket
 -   2 roles: admin( add flights, aiports, term,...) and customer( buy ticket, view schedule,...)
 
+### Usage:
+Cách 1: Chạy server trên local.
+- ở thư mục gốc của folder blights -> mở Terminal -> yarn i -> yarn start
+Cách 2: Sử dụng API trực tiếp ở server đã deploy:
+- https://bflights.onrender.com/
+
 ### Authentication
 
 #### Noted:
